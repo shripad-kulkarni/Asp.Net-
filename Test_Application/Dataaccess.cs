@@ -19,7 +19,33 @@ namespace Test_Application
         public DataTable GetData()
         {
 
-            string query = @"select * from user_info";
+            string query = @"select * from registration";
+
+            MySqlConnection con = new MySqlConnection(connString);
+            MySqlCommand cmd = new MySqlCommand(query, con);
+            DataTable dt = new DataTable();
+            try
+            {
+                con.Open();
+                using (MySqlDataAdapter sda = new MySqlDataAdapter(cmd))
+                {
+                    sda.Fill(dt);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                con.Close();
+
+            }
+            return dt;
+        }
+        public DataTable GetUserAuthentication(string username, string password)
+        {
+
+            string query = @"select * from user_master where username = '" + username + "' and  password = '" + password + "' ";
 
             MySqlConnection con = new MySqlConnection(connString);
             MySqlCommand cmd = new MySqlCommand(query, con);
@@ -43,22 +69,22 @@ namespace Test_Application
             return dt;
         }
 
-        public Boolean InsertData(String name, String address, string contactno, string age, string gender, string subject) {
+        public Boolean InsertData(String name, String address, string Contact, string age, string Gender, string Subject) {
 
             MySqlConnection con = new MySqlConnection(connString);
             try
             {
-                string query = @"INSERT INTO user_info(Name, Address, ContactNo, Age, Gender, Subject)values(@Name, @Address, @ContactNo, @Age, @GenderRadioButtonList, @SubjectDropDownList)";
+                string query = @"INSERT INTO registration(Name, Address, Contact, Age, Gender, Subject)values(@Name, @Address, @Contact, @Age, @Gender, @Subject)";
 
                 MySqlCommand cmd = new MySqlCommand(query, con);
                  
                 cmd.Parameters.Clear();
                 cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Address", address);
-                cmd.Parameters.AddWithValue("@ContactNo", contactno);
+                cmd.Parameters.AddWithValue("@Contact", Contact);
                 cmd.Parameters.AddWithValue("@Age", age);
-                cmd.Parameters.AddWithValue("@GenderRadioButtonList", gender);
-                cmd.Parameters.AddWithValue("@SubjectDropDownList", subject);
+                cmd.Parameters.AddWithValue("@Gender", Gender);
+                cmd.Parameters.AddWithValue("@Subject", Subject);
 
                 using (con)
                 {
@@ -82,17 +108,17 @@ namespace Test_Application
         }
 
 
-        public void DeleteRow1(int i)
+        public void DeleteRow1(int Registration_ID)
         {
             MySqlConnection con = new MySqlConnection(connString);
 
            
             try
             {
-                string deleteQuery = "DELETE FROM user_info WHERE ID = @ID";
+                string deleteQuery = "DELETE FROM registration WHERE Registration_ID = @Registration_ID";
                 MySqlCommand cmd = new MySqlCommand(deleteQuery, con);
 
-                cmd.Parameters.AddWithValue("@ID", i);
+                cmd.Parameters.AddWithValue("@Registration_ID", Registration_ID);
                    
                 con.Open();
                 int rowsAffected = cmd.ExecuteNonQuery();
@@ -108,21 +134,21 @@ namespace Test_Application
         }
 
 
-        public void UpdatedRow(string id,string name,string address,string contactno, string age, string gender , string subject)
+        public void UpdatedRow(string Registration_ID, string name,string address,string contactno, string age, string gender , string subject)
         {
             MySqlConnection con = new MySqlConnection(connString);
 
 
             try
             {
-                string updateQuery = "Update user_info set Name=@name, Address=@address, " +
-                    "ContactNo=@contactno, Age=@age, Gender=@gender, Subject=@subject  WHERE ID = @id";
+                string updateQuery = "Update registration set Name=@name, Address=@address, " +
+                    "Contact=@Contact, Age=@Age, Gender=@gender, Subject=@subject  WHERE Registration_ID = @Registration_ID";
                 MySqlCommand cmd = new MySqlCommand(updateQuery, con);
 
-                cmd.Parameters.AddWithValue("@ID", id);
+                cmd.Parameters.AddWithValue("@Registration_ID", Registration_ID);
                 cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Address", address);
-                cmd.Parameters.AddWithValue("@ContactNo", contactno);
+                cmd.Parameters.AddWithValue("@Contact", contactno);
                 cmd.Parameters.AddWithValue("@Age", age);
                 cmd.Parameters.AddWithValue("@Gender", gender);
                 cmd.Parameters.AddWithValue("@Subject", subject);
@@ -140,6 +166,7 @@ namespace Test_Application
 
 
         }
+
 
 
     }
